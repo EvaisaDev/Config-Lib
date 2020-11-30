@@ -1,0 +1,22 @@
+<Materials>
+  <Reaction probability="50"
+  	input_cell1="brass" 	input_cell2="diamond"
+  	output_cell1="purifying_powder"	output_cell2="purifying_powder" 
+	blob_radius1="3"	blob_radius2="3"
+	>
+  </Reaction>
+  
+  <Reaction probability="80"
+  	input_cell1="purifying_powder" 	input_cell2="[impure]"
+  	output_cell1="purifying_powder"	output_cell2="water" 
+	blob_radius2="2"
+	>
+  </Reaction>
+  
+  <Reaction probability="80"
+  	input_cell1="purifying_powder" 	input_cell2="[regenerative]"
+  	output_cell1="gunpowder_unstable"	output_cell2="gunpowder_unstable" 
+	blob_radius1="4"	blob_radius2="4"
+	>
+  </Reaction>
+</Materials>

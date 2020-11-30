@@ -1,0 +1,1 @@
+print("Config Lib - Loading special config stuffs")

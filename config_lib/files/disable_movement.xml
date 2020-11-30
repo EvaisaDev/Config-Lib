@@ -1,0 +1,8 @@
+<Entity name="kill_movement">
+    <InheritTransformComponent />
+    <GameEffectComponent 
+		effect="CUSTOM"
+        frames="5"
+        disable_movement="1">
+    </GameEffectComponent >
+</Entity>

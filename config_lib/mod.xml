@@ -1,0 +1,6 @@
+<Mod
+	name="Config Lib"
+	description="Allows for mods to easily add config menus."
+	request_no_api_restrictions="0"	
+>
+</Mod>
