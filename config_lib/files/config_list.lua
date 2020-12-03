@@ -1,4 +1,187 @@
 config_list = {
+    {
+        mod_id = "credits",
+        mod_name = "$config_lib_config_credits",
+        categories = {
+            {
+                category_id = "credits",
+                category = "$config_lib_config_credits_2",
+                items_per_page = 45,
+                items_per_row = 15,
+                items = {
+                    {
+                        name = "$config_lib_credits_0",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_1",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_2",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_3",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_4",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_5",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_6",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_7",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_8",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_9",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                    {
+                        name = "$config_lib_credits_10",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },
+                    {
+                        name = "$config_lib_credits_11",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },    
+                    {
+                        name = "$config_lib_credits_12",
+                        required_flag = "",
+                        description = "",
+                        offset_x = -4,
+                        offset_y = 0,
+                        color = "ffffffff",
+                        type = "text"
+                    },      
+                    {
+                        required_flag = "",
+                        type = "spacer"
+                    },  
+                }
+            },            
+        }
+    },
 	{
         mod_id = "config_lib",
         mod_name = "Config Lib",
