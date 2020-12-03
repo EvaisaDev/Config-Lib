@@ -68,6 +68,18 @@ config_list = {
                         type = "button",
                         callback = function(item)
                             button_hidden = true
+                            open = false
+                            if(get_player())then
+                                player = get_player()
+                                controls = EntityGetFirstComponent(player, "ControlsComponent")
+                                if(controls ~= nil and controls ~= 0)then
+                                    ComponentSetValue2(controls, "enabled",true)
+                                    -- GamePrint("Enabling controls")
+                                    --StreamingSetVotingEnabled( true )
+                                    was_recently_disabled = false
+                                    was_recently_enabled = true
+                                end
+                            end
                         end
                     },
                    --[[ {

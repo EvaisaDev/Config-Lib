@@ -36,9 +36,9 @@ function OnWorldPreUpdate()
 
 
         config_time = config_time + 1
-        if(not button_hidden)then
-            dofile("mods/config_lib/files/gui.lua")
-        end
+
+        dofile("mods/config_lib/files/gui.lua")
+
 
         if(GameHasFlagRun("config_lib_update_config"))then
             GameRemoveFlagRun("config_lib_update_config")
@@ -61,8 +61,20 @@ function OnWorldPreUpdate()
 
         if(HasSettingFlag(get_flag("config_lib", "options", "hide_config_button_after_minutes")))then
         -- GamePrint("button_time = "..config_time)
-            if(config_time > 1800)then
+            if(config_time > 1800 and button_hidden == false)then
                 button_hidden = true
+                
+                if(get_player())then
+                    player = get_player()
+                    controls = EntityGetFirstComponent(player, "ControlsComponent")
+                    if(controls ~= nil and controls ~= 0)then
+                        ComponentSetValue2(controls, "enabled",true)
+                        -- GamePrint("Enabling controls")
+                        --StreamingSetVotingEnabled( true )
+                        was_recently_disabled = false
+                        was_recently_enabled = true
+                    end
+                end
             end
         end
     end

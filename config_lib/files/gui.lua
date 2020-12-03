@@ -319,26 +319,32 @@ if(button_hidden == false)then
        current_button_reservation = mod_button_reservation;
    end
    GlobalsSetValue( "mod_button_tr_current", tostring( current_button_reservation + 15 ) );
-    if(GameHasFlagRun( flag_prefix.."_config_changed" ))then
-        if GuiImageButton( gui, new_id(), sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon_changed.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."*]", new_id()) then
-            open = not open
-            GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
-        end
-    else
-        if GuiImageButton( gui, new_id(), sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."]", new_id()) then
-            open = not open
-            GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
-        end
-    end
-    local width = GuiGetTextDimensions( gui, "Settings for mods that utilize Config Lib" );
-    --GuiZSetForNextWidget(gui, -200)
-    do_custom_tooltip( function()
-        GuiText( gui, 0, 0, "Mod Settings" );
-        GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
-        GuiText( gui, 0, 0, "Settings for mods that utilize Config Lib" );
-    end, -100, -width - 24, 10 );
 
-    GlobalsSetValue( "mod_button_tr_current", tostring( current_button_reservation + 15 ) );
+    if not button_hidden then
+        if(GameHasFlagRun( flag_prefix.."_config_changed" ))then
+            if GuiImageButton( gui, new_id(), sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon_changed.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."*]", new_id()) then
+                open = not open
+                GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+            end
+        else
+            if GuiImageButton( gui, new_id(), sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."]", new_id()) then
+                open = not open
+                GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+            end
+        end
+        local width = GuiGetTextDimensions( gui, "Settings for mods that utilize Config Lib" );
+        --GuiZSetForNextWidget(gui, -200)
+        do_custom_tooltip( function()
+            GuiText( gui, 0, 0, "Mod Settings" );
+            GuiColorSetForNextWidget( gui, 0.5, 0.5, 0.5, 1.0 );
+            GuiText( gui, 0, 0, "Settings for mods that utilize Config Lib" );
+        end, -100, -width - 24, 10 );
+
+        GlobalsSetValue( "mod_button_tr_current", tostring( current_button_reservation + 15 ) );
+
+    else
+        open = false
+    end
 
     GuiZSet( gui, -90 )
    -- GuiLayoutEnd(gui)
@@ -380,7 +386,7 @@ if(button_hidden == false)then
         end
     end
 
-    if open then
+    if open and not button_hidden then
         local cx, cy = GameGetCameraPos()
 
         --local vw = MagicNumbersGetValue("VIRTUAL_RESOLUTION_X") / 2
