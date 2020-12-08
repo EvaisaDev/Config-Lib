@@ -81,15 +81,17 @@ function OnWorldPreUpdate()
 
 end
 
-function OnPlayerSpawned( player_entity )
-    GlobalsSetValue( "mod_button_tr_width", "0" );
-
-end
 
 function OnWorldInitialized()
     local mod_button_reservation = tonumber( GlobalsGetValue( "mod_button_tr_width", "0" ) );
     GlobalsSetValue( "config_lib_mod_button_reservation", tostring( mod_button_reservation ) );
     GlobalsSetValue( "mod_button_tr_width", tostring( mod_button_reservation + 15 ) );
+end
+
+
+function OnPlayerSpawned( player_entity )
+    GlobalsSetValue( "mod_button_tr_width", "0" );
+
 end
 
 function OnWorldPostUpdate()

@@ -1,9 +1,9 @@
 gui = gui or GuiCreate()
-guibackground = guibackground or GuiCreate()
+--guibackground = guibackground or GuiCreate()
 open = open or false
 initialized = initialized or false
 page = page or 1
-current_id = 1
+current_id = 10000
 categories_to_show = 5
 page_numbers_to_show = 15
 mods_to_show = 5
@@ -54,6 +54,7 @@ function new_id()
     current_id = current_id + 1
     return current_id
 end
+
 
 function sort_options(a, b)
     a = tostring(a.name)
@@ -200,7 +201,7 @@ if(times_run == 2)then
                         --store_int(get_flag(v.mod_id, v2.category_id, item.flag), 32, item.current_number)
 
                         ModSettingSet( get_flag(v.mod_id, v2.category_id, item.flag), item.current_number )
-                        print("Config Lib - Setting data: "..get_flag(v.mod_id, v2.category_id, item.flag))
+                        --print("Config Lib - Setting data: "..get_flag(v.mod_id, v2.category_id, item.flag))
                     else
                         item.current_number = ModSettingGet( get_flag(v.mod_id, v2.category_id, item.flag))--retrieve_int(get_flag(v.mod_id, v2.category_id, item.flag), 32)
                     end
@@ -221,7 +222,6 @@ else
                 if(item.type == "slider")then
                     if(item.previous_number ~= nil)then
                         if(item.previous_number ~= item.current_number and item.old_number == item.current_number)then
-                           -- GamePrint("Cock is huge")
                             item.previous_number = item.current_number
                             ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.current_number)
                         end
@@ -231,7 +231,6 @@ else
                 elseif(item.type == "input")then
                     if(item.previous_text ~= nil)then
                         if(item.previous_text ~= item.current_text and item.old_text == item.current_text)then
-                            -- GamePrint("Cock is huge")
                              item.previous_text = item.current_text
                              ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.current_text)
                          end
@@ -307,27 +306,33 @@ if(button_hidden == false)then
     end
 ]]
     GuiStartFrame(gui)
+    GuiIdPushString( gui, "config_lib" )
     GuiZSet( gui, -90 )
     GuiOptionsAdd( gui, GUI_OPTION.NoPositionTween )
     -- Menu toggle button
    -- GuiLayoutBeginVertical(gui, button_position.x, button_position.y)
-   local mod_button_reservation = tonumber( GlobalsGetValue( "config_lib_mod_button_reservation", "0" ) );
-   local current_button_reservation = tonumber( GlobalsGetValue( "mod_button_tr_current", "0" ) );
-   if current_button_reservation ~= mod_button_reservation then
-       current_button_reservation = math.max( 0, current_button_reservation - mod_button_reservation );
-   else
-       current_button_reservation = mod_button_reservation;
-   end
-   GlobalsSetValue( "mod_button_tr_current", tostring( current_button_reservation + 15 ) );
+   if not button_hidden then
+        local mod_button_reservation = tonumber( GlobalsGetValue( "config_lib_mod_button_reservation", "0" ) );
+        local current_button_reservation = tonumber( GlobalsGetValue( "mod_button_tr_current", "0" ) );
+        if current_button_reservation > mod_button_reservation then
+            current_button_reservation = mod_button_reservation;
+        elseif current_button_reservation < mod_button_reservation then
+            current_button_reservation = math.max( 0, mod_button_reservation + (current_button_reservation - mod_button_reservation ) );
+        else
+            current_button_reservation = mod_button_reservation;
+        end
+        GlobalsSetValue( "mod_button_tr_current", tostring( current_button_reservation + 15 ) );
+        --GuiOptionsAddForNextWidget( gui, GUI_OPTION.NoSound )
+        button_id = new_id()
+       -- print("button id = "..button_id)
 
-    if not button_hidden then
         if(GameHasFlagRun( flag_prefix.."_config_changed" ))then
-            if GuiImageButton( gui, new_id(), sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon_changed.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."*]", new_id()) then
+            if GuiImageButton( gui, button_id, sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon_changed.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."*]", new_id()) then
                 open = not open
                 GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
             end
         else
-            if GuiImageButton( gui, new_id(), sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."]", new_id()) then
+            if GuiImageButton( gui, button_id, sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."]", new_id()) then
                 open = not open
                 GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
             end
@@ -358,8 +363,10 @@ if(button_hidden == false)then
     was_recently_enabled = was_recently_enabled or false
 
     if open then
+        GameAddFlagRun("config_lib_open")
         GlobalsSetValue("config_lib_open", "true")
     else
+        GameRemoveFlagRun("config_lib_open")
         GlobalsSetValue("config_lib_open", "false")
     end
 
@@ -1395,12 +1402,16 @@ if(button_hidden == false)then
 
             GuiLayoutBeginVertical(gui, 0, 0)
             GuiZSetForNextWidget( gui, -92 )
-            GuiBeginScrollContainer( gui, tonumber(tostring(new_id()) + tostring(selected_mod_index) + tostring(selected_category_index)) , 0, 0, container_w, container_h, true, 5, 5 )
+
+
+            local scroll_id = tonumber( tostring( tostring(selected_mod_index) .. tostring(selected_category_index)))
+            GuiBeginScrollContainer( gui, scroll_id, 0, 0, container_w, container_h, true, 5, 5 )
+
             GuiLayoutBeginHorizontal(gui, 2, 2)
 		   -- GuiLayoutBeginVertical(gui, 0, 0)
 		   
-		   offset = offset + horizontal_gap
-		   GuiLayoutBeginVertical(gui, offset, 0)
+		    offset = offset + horizontal_gap
+		    GuiLayoutBeginVertical(gui, offset, 0)
 
             if(#gui_options[selected_mod_index].categories[selected_category_index].items > 0)then
                 for i, item in ipairs(gui_options[selected_mod_index].categories[selected_category_index].items)do
@@ -1441,7 +1452,7 @@ if(button_hidden == false)then
                             GuiLayoutBeginHorizontal(gui, 0, 0)
                             
                             if (GuiImageButton( gui, new_id(), 0, 1, "", "mods/config_lib/files/gfx/checkbox" .. (checked == true and "_fill" or "") .. ".png" )) then
-                                print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
+                               -- print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                 if checked then
                                     RemoveSettingFlag(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                     if(item.callback ~= nil)then
@@ -1463,7 +1474,7 @@ if(button_hidden == false)then
                                 end
                             end
                             if (GuiButton(gui, 0, 0, GameTextGetTranslatedOrNot(item.name), new_id()))then
-                                print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
+                             --   print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                 if checked then
                                     RemoveSettingFlag(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                     if(item.callback ~= nil)then
@@ -1500,7 +1511,22 @@ if(button_hidden == false)then
                                 end
                             end
                         elseif(item.type == "slider")then
+
                             GuiLayoutBeginHorizontal(gui, 0, 0)
+
+                            longest_name_length = 0
+
+                            for k, checked_item in pairs(gui_options[selected_mod_index].categories[selected_category_index].items)do
+                                if(checked_item.type == "slider" or checked_item.type == "input")then
+                                    curr_width = GuiGetTextDimensions(gui, GameTextGetTranslatedOrNot(checked_item.name), 1, 2)
+                                    if( curr_width > longest_name_length)then
+                                        longest_name_length = curr_width
+                                    end
+                                end
+                            end
+                            curr_width = GuiGetTextDimensions(gui, GameTextGetTranslatedOrNot(item.name), 1, 2)
+                            offset_size = longest_name_length - curr_width + 20
+
                             GuiText(gui, 0, 0.4, GameTextGetTranslatedOrNot(item.name))
                             if(item.description ~= nil)then
                                 if(GameTextGetTranslatedOrNot(item.description) ~= "")then
@@ -1508,8 +1534,10 @@ if(button_hidden == false)then
                                 end
                             end
 
+
+
                             item.old_number = item.current_number
-                            local new_number = math.round(GuiSlider( gui, new_id(), 0, 1, "", item.current_number, item.min_number, item.max_number, item.current_number, 1, " ", 64 ))
+                            local new_number = math.round(GuiSlider( gui, new_id(), offset_size, 1, "", item.current_number, item.min_number, item.max_number, item.current_number, 1, " ", 160 ))
 
                             if(item.old_number ~= new_number)then
                                 if(item.requires_restart)then
@@ -1528,7 +1556,21 @@ if(button_hidden == false)then
                                 end
                             end
                             GuiLayoutEnd(gui)
+
                         elseif(item.type == "input")then
+
+                            longest_name_length = 0
+
+                            for k, checked_item in pairs(gui_options[selected_mod_index].categories[selected_category_index].items)do
+                                if(checked_item.type == "slider" or checked_item.type == "input")then
+                                    curr_width = GuiGetTextDimensions(gui, GameTextGetTranslatedOrNot(checked_item.name), 1, 2)
+                                    if( curr_width > longest_name_length)then
+                                        longest_name_length = curr_width
+                                    end
+                                end
+                            end
+                            curr_width = GuiGetTextDimensions(gui, GameTextGetTranslatedOrNot(item.name), 1, 2)
+                            offset_size = longest_name_length - curr_width + 20
 
                             GuiLayoutBeginHorizontal(gui, 0, 0)
                             GuiText(gui, 0, 0.4, GameTextGetTranslatedOrNot(item.name))
@@ -1540,7 +1582,7 @@ if(button_hidden == false)then
 
                             item.old_text = item.current_text
 
-                            local text = GuiTextInput( gui, new_id(), 0, 0, item.current_text, 100, item.text_max_length, item.allowed_chars )
+                            local text = GuiTextInput( gui, new_id(), offset_size, 0, item.current_text, 100, item.text_max_length, item.allowed_chars )
                             if(item.description ~= nil)then
                                 if(GameTextGetTranslatedOrNot(item.description) ~= "")then
                                     GuiTooltip( gui, "", GameTextGetTranslatedOrNot(item.description) )
@@ -1593,7 +1635,8 @@ if(button_hidden == false)then
             end
             GuiText(gui, 0, 0, "  ")
             GuiLayoutEnd(gui)
-            
+
+            GuiOptionsAddForNextWidget( gui, GUI_OPTION.NoSound )
             GuiEndScrollContainer( gui )
                 
             --GuiLayoutBeginHorizontal(gui, 5, 92)
@@ -1626,7 +1669,9 @@ if(button_hidden == false)then
         
         GuiEndAutoBoxNinePiece( gui, 5, 0, 0, false, 0, "mods/config_lib/files/gfx/background.png", "mods/config_lib/files/gfx/background.png" )
         --GuiImageNinePiece( gui, new_id(), 25, 60, sx - 50, sy - 85, 1, "data/ui_gfx/decorations/9piece0_gray.png", "data/ui_gfx/decorations/9piece0_gray.png" )
+
+       -- here
     end
 
-
+    GuiIdPop( gui )
 end
