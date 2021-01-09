@@ -205,7 +205,43 @@ if(times_run == 2)then
                     else
                         item.current_number = ModSettingGet( get_flag(v.mod_id, v2.category_id, item.flag))--retrieve_int(get_flag(v.mod_id, v2.category_id, item.flag), 32)
                     end
-                    
+                elseif(item.type == "input")then
+                    --print("Getting flag: "..get_flag(v.mod_id, v2.category_id, item.flag))
+                    if(ModSettingGet( get_flag(v.mod_id, v2.category_id, item.flag)) == nil)then
+                        item.current_text = item.default_text
+
+                        --store_int(get_flag(v.mod_id, v2.category_id, item.flag), 32, item.current_number)
+
+                        ModSettingSet( get_flag(v.mod_id, v2.category_id, item.flag), item.current_text )
+                        --print("Config Lib - Setting data: "..get_flag(v.mod_id, v2.category_id, item.flag))
+                    else
+                        item.current_text = ModSettingGet( get_flag(v.mod_id, v2.category_id, item.flag))--retrieve_int(get_flag(v.mod_id, v2.category_id, item.flag), 32)
+                    end
+                elseif(item.type == "enum")then
+                    if(ModSettingGet( get_flag(v.mod_id, v2.category_id, item.flag)) == nil)then
+                        key = nil
+                        for k, v in pairs(item.values)do
+                            if(v[1] == item.default)then
+                                key = k
+                            end
+                        end
+                        if(key ~= nil)then
+                            item.current_key = key
+
+                            ModSettingSet( get_flag(v.mod_id, v2.category_id, item.flag), item.default )
+                        end
+                    else
+                        item_name = ModSettingGet( get_flag(v.mod_id, v2.category_id, item.flag))
+                        key = nil
+                        for k, v in pairs(item.values)do
+                            if(v[1] == item_name)then
+                                key = k
+                            end
+                        end
+                        if(key ~= nil)then
+                            item.current_key = key
+                        end
+                    end
                 end
             end
         end
@@ -236,6 +272,18 @@ else
                          end
                     else
                         ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.current_text)
+                    end
+                elseif(item.type == "enum")then
+                   -- item.current_key = item.current_key or 1
+                    if(item.old_key ~= nil)then
+                        if(item.old_key ~= item.current_key)then
+                             
+                             item.old_key = item.current_key
+
+                             ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.values[item.current_key][1])
+                         end
+                    else
+                        ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.values[item.current_key][1])
                     end
                 end
             end
@@ -329,12 +377,12 @@ if(button_hidden == false)then
         if(GameHasFlagRun( flag_prefix.."_config_changed" ))then
             if GuiImageButton( gui, button_id, sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon_changed.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."*]", new_id()) then
                 open = not open
-                GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
             end
         else
             if GuiImageButton( gui, button_id, sx - 14 - current_button_reservation, 2, "", "mods/config_lib/files/gfx/icon.png" )then--if GuiButton(gui, 0, 0, "["..gui_name.."]", new_id()) then
                 open = not open
-                GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
             end
         end
         local width = GuiGetTextDimensions( gui, "Settings for mods that utilize Config Lib" );
@@ -430,7 +478,7 @@ if(button_hidden == false)then
                     end
                     mod_area = mod_area - count_to_subtract
 
-                    GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                    GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
                 end
                 being_hovered = hover_stats["mods_back_button"] or false
                 was_being_hovered = hover_stats_previous["mods_back_button"] or false
@@ -439,7 +487,7 @@ if(button_hidden == false)then
                 
                 if(being_hovered and not was_being_hovered)then
                    -- GamePrint("pretty neat")
-                    GamePlaySound( "ui", "ui/button_select", cam_x, cam_y )
+                    GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_select", cam_x, cam_y )
                 end
                 
                 hover_stats_previous["mods_back_button"] = being_hovered
@@ -610,7 +658,7 @@ if(button_hidden == false)then
                     selected_category_index = 1
                     selected_page_number = 1
 
-                    GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                    GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
                 end
                 being_hovered = hover_stats["mods"..category.mod_name..tostring(i)] or false
                 was_being_hovered = hover_stats_previous["mods"..category.mod_name..tostring(i)] or false
@@ -619,7 +667,7 @@ if(button_hidden == false)then
                 
                 if(being_hovered and not was_being_hovered)then
                    -- GamePrint("pretty neat")
-                    GamePlaySound( "ui", "ui/button_select", cam_x, cam_y )
+                    GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_select", cam_x, cam_y )
                 end
                 
                 hover_stats_previous["mods"..category.mod_name..tostring(i)] = being_hovered
@@ -707,7 +755,7 @@ if(button_hidden == false)then
                     end
                     mod_area = mod_area + count_to_add
 
-                    GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                    GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
                 end
                 being_hovered = hover_stats["mods_back_button"] or false
                 was_being_hovered = hover_stats_previous["mods_back_button"] or false
@@ -716,7 +764,7 @@ if(button_hidden == false)then
                 
                 if(being_hovered and not was_being_hovered)then
                    -- GamePrint("pretty neat")
-                    GamePlaySound( "ui", "ui/button_select", cam_x, cam_y )
+                    GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_select", cam_x, cam_y )
                 end
                 
                 hover_stats_previous["mods_back_button"] = being_hovered
@@ -891,7 +939,7 @@ if(button_hidden == false)then
                         end
                         category_area = category_area - count_to_subtract
     
-                        GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                        GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
                     end
                     being_hovered = hover_stats["categories_back_button"] or false
                     was_being_hovered = hover_stats_previous["categories_back_button"] or false
@@ -900,7 +948,7 @@ if(button_hidden == false)then
                     
                     if(being_hovered and not was_being_hovered)then
                        -- GamePrint("pretty neat")
-                        GamePlaySound( "ui", "ui/button_select", cam_x, cam_y )
+                        GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_select", cam_x, cam_y )
                     end
                     
                     hover_stats_previous["categories_back_button"] = being_hovered
@@ -1040,7 +1088,7 @@ if(button_hidden == false)then
                         selected_category_index = i
                         selected_page_number = 1
     
-                        GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                        GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
                     end
                     being_hovered = hover_stats["categories"..category.category..tostring(i)] or false
                     was_being_hovered = hover_stats_previous["categories"..category.category..tostring(i)] or false
@@ -1049,7 +1097,7 @@ if(button_hidden == false)then
                     
                     if(being_hovered and not was_being_hovered)then
                        -- GamePrint("pretty neat")
-                        GamePlaySound( "ui", "ui/button_select", cam_x, cam_y )
+                        GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_select", cam_x, cam_y )
                     end
                     
                     hover_stats_previous["categories"..category.category..tostring(i)] = being_hovered
@@ -1163,7 +1211,7 @@ if(button_hidden == false)then
                         end
                         category_area = category_area + count_to_add
     
-                        GamePlaySound( "ui", "ui/button_click", cam_x, cam_y )
+                        GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_click", cam_x, cam_y )
                     end
                     being_hovered = hover_stats["categories_forward_button"] or false
                     was_being_hovered = hover_stats_previous["categories_forward_button"] or false
@@ -1172,7 +1220,7 @@ if(button_hidden == false)then
                     
                     if(being_hovered and not was_being_hovered)then
                        -- GamePrint("pretty neat")
-                        GamePlaySound( "ui", "ui/button_select", cam_x, cam_y )
+                        GamePlaySound( "data/audio/Desktop/ui.bank", "ui/button_select", cam_x, cam_y )
                     end
                     
                     hover_stats_previous["categories_forward_button"] = being_hovered
@@ -1505,6 +1553,34 @@ if(button_hidden == false)then
                             if GuiButton(gui, 0, 0, GameTextGetTranslatedOrNot(item.name), new_id()) then
                                 item.callback(item)
                             end
+                            if(item.description ~= nil)then
+                                if(GameTextGetTranslatedOrNot(item.description) ~= "")then
+                                    GuiTooltip( gui, "", GameTextGetTranslatedOrNot(item.description) )
+                                end
+                            end
+                        elseif(item.type == "enum")then
+                            local value = item.current_key
+
+                            local text = item.name .. ": " .. item.values[value][2]
+
+                            item.old_key = item.current_key
+
+                            local clicked,right_clicked = GuiButton( gui, new_id(), 0, 0, text )
+
+                            if clicked then
+                                value = value + 1
+                                if value > #(item.values) then
+                                    value = 1
+                                end
+
+                                item.current_key = value
+                            end
+
+                            --[[
+                            if GuiButton(gui, 0, 0, GameTextGetTranslatedOrNot(item.name), new_id()) then
+                                item.callback(item)
+                            end
+                            ]]
                             if(item.description ~= nil)then
                                 if(GameTextGetTranslatedOrNot(item.description) ~= "")then
                                     GuiTooltip( gui, "", GameTextGetTranslatedOrNot(item.description) )
