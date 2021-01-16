@@ -1658,7 +1658,7 @@ if(button_hidden == false)then
 
                             item.old_text = item.current_text
 
-                            local text = GuiTextInput( gui, new_id(), offset_size, 0, item.current_text, 100, item.text_max_length, item.allowed_chars )
+                            local text = GuiTextInput( gui, new_id(), offset_size, 0, item.current_text, item.text_max_length * 4, item.text_max_length, item.allowed_chars )
                             if(item.description ~= nil)then
                                 if(GameTextGetTranslatedOrNot(item.description) ~= "")then
                                     GuiTooltip( gui, "", GameTextGetTranslatedOrNot(item.description) )
@@ -1705,7 +1705,7 @@ if(button_hidden == false)then
                         end
                     end
                 end
-
+                -- okay
             else
                 GuiText(gui, 0, 0, GameTextGetTranslatedOrNot("$config_lib_no_options_category"))
             end
