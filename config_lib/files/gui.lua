@@ -26,6 +26,10 @@ page_number_area = page_number_area or 1
 hover_stats = hover_stats or {}
 hover_stats_previous = hover_stats_previous or {}
 
+if(ModIsEnabled("twitch_lib"))then
+	dofile_once("mods/twitch_lib/files/twitch_overwrites.lua")
+end
+
 
 function do_custom_tooltip( callback, z, x_offset, y_offset )
     if z == nil then z = -12; end
@@ -137,7 +141,7 @@ function register_mod(name, mod_id)
         end
     end
 end
-
+-- wab
 function register_category(mod_name, category_id, name, items_per_page, items_per_row)
     local items_per_page = items_per_page or default_items_per_page
     local items_per_row = items_per_row or default_items_per_row
@@ -275,16 +279,7 @@ else
                     end
                 elseif(item.type == "enum")then
                    -- item.current_key = item.current_key or 1
-                    if(item.old_key ~= nil)then
-                        if(item.old_key ~= item.current_key)then
-                             
-                             item.old_key = item.current_key
-
-                             ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.values[item.current_key][1])
-                         end
-                    else
-                        ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.values[item.current_key][1])
-                    end
+                   ModSettingSet(get_flag(mod.mod_id, category.category_id, item.flag), item.values[item.current_key][1])
                 end
             end
         end
@@ -424,17 +419,23 @@ if(button_hidden == false)then
         if(controls ~= nil and controls ~= 0)then
             if(open and not was_recently_disabled)then
                 player_x, player_y = EntityGetTransform(player)
-                ComponentSetValue2(controls, "enabled",false)
-                child = EntityLoad("mods/config_lib/files/disable_movement.xml", player_x, player_y)
-                EntityAddChild(player, child)
+                if(HasSettingFlag(get_flag("config_lib", "options", "disable_controls")))then
+                    ComponentSetValue2(controls, "enabled",false)
+                    child = EntityLoad("mods/config_lib/files/disable_movement.xml", player_x, player_y)
+                    EntityAddChild(player, child)
+                end
                 --GamePrint("Disabling controls")
-                --StreamingSetVotingEnabled( false )
+
+                StreamingSetVotingEnabled( false )
                 was_recently_disabled = true
                 was_recently_enabled = false
             elseif(not open and not was_recently_enabled)then
-                ComponentSetValue2(controls, "enabled",true)
+                
+                if((ModIsEnabled("noita-together") and GameHasFlagRun("NT_unlocked_controls")) or not ModIsEnabled("noita-together"))then
+                    ComponentSetValue2(controls, "enabled",true)
+                end
                 -- GamePrint("Enabling controls")
-                --StreamingSetVotingEnabled( true )
+                StreamingSetVotingEnabled( true )
                 was_recently_disabled = false
                 was_recently_enabled = true
             end
@@ -544,103 +545,8 @@ if(button_hidden == false)then
                     hover_stats["mods_back_button"] = false
                 end
 
-                --[[
-                text = " << "
-                offset_y = -3
-                func = function()
-                    count_to_subtract = mods_to_show
-                    if(mod_area < count_to_subtract + 1)then
-                        count_to_subtract = mod_area - 1
-                    end
-                    mod_area = mod_area - count_to_subtract
-                end
-		
-				GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-				--GuiZSetForNextWidget( gui, -50 )
-				if GuiImageButton(gui, new_id(), 0, offset_y, "", "mods/config_lib/files/gfx/tab/tab_"..((selected_mod_index == i) and "selected" or "unselected").."_left"..".png") then
-                    func()
-				end
-                GuiZSetForNextWidget( gui, -50 )
-                if GuiButton(gui, 0, 2, text, new_id()) then
-                    func()
-                end
-                
-                offset = GuiGetTextDimensions( gui, text, 1, 2 ) + 2
-
-                for i2 = 1, space_count do
-                    if(i2 > 1)then
-                        offset = 0
-                    end
-					GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-					if GuiImageButton(gui, new_id(), -offset-2-(i2 / (space_count * 32)), offset_y, "", "mods/config_lib/files/gfx/tab/tab_"..((selected_mod_index == i) and "selected" or "unselected").."_center"..".png") then
-                        func()
-					end
-				end
-
-				GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-				if GuiImageButton(gui, new_id(), -2, offset_y, "", "mods/config_lib/files/gfx/tab/tab_"..((selected_mod_index == i) and "selected" or "unselected").."_right"..".png") then
-                    func()
-                end
-                ]]
-                
-                --[[
-                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-                GuiZSetForNextWidget( gui, -50 )
-                if GuiImageButton(gui, new_id(), 0, -3, " << ", "mods/config_lib/files/gfx/tab/tab_unselected_left"..".png") then
-                    count_to_subtract = mods_to_show
-                    if(mod_area < count_to_subtract + 1)then
-                        count_to_subtract = mod_area - 1
-                    end
-                    mod_area = mod_area - count_to_subtract
-                end
-                for i2 = 1, space_count do
-                    GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-                    if GuiImageButton(gui, new_id(), -2-(i2 / (space_count * 32)), -3, "", "mods/config_lib/files/gfx/tab/tab_unselected_center"..".png") then
-                        count_to_subtract = mods_to_show
-                        if(mod_area < count_to_subtract + 1)then
-                            count_to_subtract = mod_area - 1
-                        end
-                        mod_area = mod_area - count_to_subtract
-                    end
-                end
-
-                GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-                if GuiImageButton(gui, new_id(), -2, -3, "", "mods/config_lib/files/gfx/tab/tab_unselected_right"..".png") then
-                    count_to_subtract = mods_to_show
-                    if(mod_area < count_to_subtract + 1)then
-                        count_to_subtract = mod_area - 1
-                    end
-                    mod_area = mod_area - count_to_subtract
-                end
-                ]]
-                --[[
-                if GuiButton(gui, 0, 0, "[<<]", new_id()) then
-            
-                    count_to_subtract = mods_to_show
-                    if(mod_area < count_to_subtract + 1)then
-                        count_to_subtract = mod_area - 1
-                    end
-                    mod_area = mod_area - count_to_subtract
-                    
-                end
-                ]]
-            else
-                --[[if GuiButton(gui, 0, 0, "[xx]", new_id()) then
-
-                end]]
             end
-            --[[
-            if(mod_area ~= 1)then
-                if GuiButton(gui, 0, 0, "[<]", new_id()) then
-                
-                    mod_area = mod_area - 1
-                end
-            else
-                if GuiButton(gui, 0, 0, "[x]", new_id()) then
 
-                end
-            end
-]]
         end
 
         for i,category in ipairs(gui_options) do
@@ -1153,31 +1059,6 @@ if(button_hidden == false)then
                         hover_stats["categories"..category.category..tostring(i)] = false
                     end
 
-                    --[[
-					space_count = math.round(#GameTextGetTranslatedOrNot(category.category) / 2) 
-
-					
-					GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-					GuiZSetForNextWidget( gui, -50 )
-					if GuiImageButton(gui, new_id(), 0, 1, GameTextGetTranslatedOrNot(category.category), "mods/config_lib/files/gfx/tab/tab_"..((selected_category_index == i) and "selected" or "unselected").."_left"..".png") then
-                        selected_category_index = i
-                        selected_page_number = 1
-					end
-					for i2 = 1, space_count do
-						GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-						if GuiImageButton(gui, new_id(), -2-(i2 / (space_count * 32)), 1, "", "mods/config_lib/files/gfx/tab/tab_"..((selected_category_index == i) and "selected" or "unselected").."_center"..".png") then
-							selected_category_index = i
-							selected_page_number = 1
-						end
-					end
-
-					GuiOptionsAddForNextWidget( gui, GUI_OPTION.DrawNoHoverAnimation )
-					if GuiImageButton(gui, new_id(), -2, 1, "", "mods/config_lib/files/gfx/tab/tab_"..((selected_category_index == i) and "selected" or "unselected").."_right"..".png") then
-                        selected_category_index = i
-                        selected_page_number = 1
-                    end
-                    ]]
-
                 end
 
             end
@@ -1501,6 +1382,7 @@ if(button_hidden == false)then
                             
                             if (GuiImageButton( gui, new_id(), 0, 1, "", "mods/config_lib/files/gfx/checkbox" .. (checked == true and "_fill" or "") .. ".png" )) then
                                -- print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
+                                print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                 if checked then
                                     RemoveSettingFlag(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                     if(item.callback ~= nil)then
@@ -1523,6 +1405,7 @@ if(button_hidden == false)then
                             end
                             if (GuiButton(gui, 0, 0, GameTextGetTranslatedOrNot(item.name), new_id()))then
                              --   print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
+                                print(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                 if checked then
                                     RemoveSettingFlag(get_flag(gui_options[selected_mod_index].mod_id, gui_options[selected_mod_index].categories[selected_category_index].category_id, item.flag))
                                     if(item.callback ~= nil)then
@@ -1561,24 +1444,41 @@ if(button_hidden == false)then
                         elseif(item.type == "enum")then
                             local value = item.current_key
 
-                            local text = item.name .. ": " .. item.values[value][2]
+                            GuiLayoutBeginHorizontal(gui, 0, 0)
+
+                            local text = GameTextGetTranslatedOrNot(item.name) .. ": "
 
                             item.old_key = item.current_key
-
-                            local clicked,right_clicked = GuiButton( gui, new_id(), 0, 0, text )
-
-                            if clicked then
+                             
+                            if GuiButton( gui, new_id(), 0, 0, text ) then
                                 value = value + 1
                                 if value > #(item.values) then
                                     value = 1
                                 end
 
+                                
                                 item.current_key = value
+                                item.callback(item)
                             end
 
+
+                            GuiColorSetForNextWidget(gui, 1, 1, 1, 0.7)
+
+                            if GuiButton( gui, new_id(), 0, 0, item.values[value][2] ) then
+                                value = value + 1
+                                if value > #(item.values) then
+                                    value = 1
+                                end
+
+                                
+                                item.current_key = value
+                                item.callback(item)
+                            end
+                            
+                            GuiLayoutEnd(gui)
                             --[[
                             if GuiButton(gui, 0, 0, GameTextGetTranslatedOrNot(item.name), new_id()) then
-                                item.callback(item)
+                               
                             end
                             ]]
                             if(item.description ~= nil)then

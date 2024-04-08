@@ -68,7 +68,9 @@ function OnWorldPreUpdate()
                     player = get_player()
                     controls = EntityGetFirstComponent(player, "ControlsComponent")
                     if(controls ~= nil and controls ~= 0)then
-                        ComponentSetValue2(controls, "enabled",true)
+                        if((ModIsEnabled("noita-together") and GameHasFlagRun("NT_unlocked_controls")) or not ModIsEnabled("noita-together"))then
+                            ComponentSetValue2(controls, "enabled",true)
+                        end
                         -- GamePrint("Enabling controls")
                         --StreamingSetVotingEnabled( true )
                         was_recently_disabled = false
